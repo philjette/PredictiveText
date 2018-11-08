@@ -1,6 +1,6 @@
 library(shiny)
 
-# Load data  ####
-dfTrain1 =  readRDS(file = 'data/dfTrain1.rds')
-dfTrain2 =  readRDS(file = 'data/dfTrain2.rds')
-dfTrain3 =  readRDS(file = 'data/dfTrain3.rds')
+# This file will execute code prior to the loading of our Shiny app. Objects are available to both ui and server files
+freq1 =  readRDS(file = 'data/freq1.rds')
+freq2 =  readRDS(file = 'data/freq2.rds')
+freq3 =  readRDS(file = 'data/freq3.rds')
