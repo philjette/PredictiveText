@@ -56,20 +56,20 @@ fun.predict = function(x, y, n = 100) {
   
   # Don't do anything until input provided
   #for the 3-gram we combine word 1 and word 2 into a single field 
- if(paste(x,y) %in% dfTrain3$combined) {
-    prediction = dfTrain3 %>%
+ if(paste(x,y) %in% freq3$combined) {
+    prediction = freq3 %>%
       filter(combined %in% paste(x,y)) %>%
       select(NextWord, freq)
     
     # Predict using 2-gram model
-  }   else if(y %in% dfTrain2$word1) {
-    prediction = dfTrain2 %>%
+  }   else if(y %in% freq2$word1) {
+    prediction = freq2 %>%
       filter(word1 %in% y) %>%
       select(NextWord, freq)
     
     # If no prediction found before, predict giving just the top 1-gram words
   }   else{
-    prediction = dfTrain1 %>%
+    prediction = freq1 %>%
       select(NextWord, freq)
   }
   

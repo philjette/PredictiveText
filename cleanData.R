@@ -12,14 +12,14 @@ blogsRaw = read_lines('../WordPrediction_Corpus/en_US/en_US.blogs.txt')
 newsRaw = read_lines('../WordPrediction_Corpus/en_US/en_US.news.txt')
 twitterRaw = readLines('../WordPrediction_Corpus/en_US/en_US.twitter.txt') # Not working with readr because of an "embedded null"
 
+combinedRaw = c(blogsRaw, newsRaw, twitterRaw)
+
 #remove raw files to save mem
 rm(blogsRaw, newsRaw, twitterRaw)
 
-combinedRaw = c(blogsRaw, newsRaw, twitterRaw)
-
 # Sample and combine data. We;ll take a large sample here and only keep the most frequently occuring n-grams  
 set.seed(1220)
-n = 1/100
+n = 1/10
 combined = sample(combinedRaw, length(combinedRaw) * n)
 
 #remove raw files to save mem
@@ -52,35 +52,35 @@ fun.frequency = function(x, minCount = 1) {
     arrange(desc(freq))
 }
 
-dfTrain1 = data_frame(NextWord = train1)
-dfTrain1 = fun.frequency(dfTrain1)
+freq1 = data_frame(NextWord = train1)
+freq1 = fun.frequency(freq1)
 
-dfTrain2 = data_frame(NextWord = train2)
-dfTrain2 = fun.frequency(dfTrain2) %>%
+freq2 = data_frame(NextWord = train2)
+freq2 = fun.frequency(freq2) %>%
   separate(NextWord, c('word1', 'NextWord'), " ")
 
-dfTrain3 = data_frame(NextWord = train3)
-dfTrain3 = fun.frequency(dfTrain3) %>%
+freq3 = data_frame(NextWord = train3)
+freq3 = fun.frequency(freq3) %>%
   separate(NextWord, c('word1', 'word2', 'NextWord'), " ")
 
 # get rid of profanity
 dirtySeven = c('fuck', 'cunt', 'cocksucker', 'motherfucker')
-dfTrain1 = filter(dfTrain1, !NextWord %in% dirtySeven)
-dfTrain2 = filter(dfTrain2, !word1 %in% dirtySeven &!NextWord %in% dirtySeven)
-dfTrain3 = filter(dfTrain3, !word1 %in% dirtySeven & !word2 %in% dirtySeven & !NextWord %in% dirtySeven)
+freq1 = filter(freq1, !NextWord %in% dirtySeven)
+freq2 = filter(freq2, !word1 %in% dirtySeven &!NextWord %in% dirtySeven)
+freq3 = filter(freq3, !word1 %in% dirtySeven & !word2 %in% dirtySeven & !NextWord %in% dirtySeven)
 
 #to facilitate finding 2-grams, I'll comine word 1 and word 2 into a single field
-dfTrain3$combined <- paste(dfTrain3$word1, dfTrain3$word2)
+freq3$combined <- paste(freq3$word1, freq3$word2)
 
 #we also want to make the data a bit leaner. Take the top 80% of n-grams for prediction and toss the rest
-dfTrain1<-dfTrain1[order(-dfTrain1$freq),]
-dfTrain1<-dfTrain1[1:round(.8*nrow(dfTrain1)),]
-dfTrain2<-dfTrain2[order(-dfTrain2$freq),]
-dfTrain2<-dfTrain2[1:round(.8*nrow(dfTrain2)),]
-dfTrain3<-dfTrain3[order(-dfTrain3$freq),]
-dfTrain3<-dfTrain3[1:round(.8*nrow(dfTrain3)),]
+freq1<-freq1[order(-freq1$freq),]
+freq1<-freq1[1:round(.8*nrow(freq1)),]
+freq2<-freq2[order(-freq2$freq),]
+freq2<-freq2[1:round(.8*nrow(freq2)),]
+freq3<-freq3[order(-freq3$freq),]
+freq3<-freq3[1:round(.8*nrow(freq3)),]
 
 # Save Data ####
-saveRDS(dfTrain1, file = 'data/dfTrain1.rds')
-saveRDS(dfTrain2, file = 'data/dfTrain2.rds')
-saveRDS(dfTrain3, file = 'data/dfTrain3.rds')
+saveRDS(freq1, file = 'data/freq1.rds')
+saveRDS(freq2, file = 'data/freq2.rds')
+saveRDS(freq3, file = 'data/freq3.rds')
